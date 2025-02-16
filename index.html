@@ -158,6 +158,30 @@
             text-decoration: none;
         }
 
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 1rem;
+            user-select: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-button:hover {
+            color: var(--primary-light);
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
         @media (max-width: 640px) {
             .detail-item {
                 flex-direction: column;
@@ -297,16 +321,16 @@
                 <h2><i class="fas fa-camera"></i> Photo Gallery</h2>
                 <div class="photo-grid">
                     <div class="photo-item">
-                        <img src="photos/photo1.jpeg" alt="Professional Portrait" onclick="openModal(this.src)">
+                        <img src="photos/photo1.jpeg" alt="Professional Portrait" onclick="openModal(0)">
                     </div>
                     <div class="photo-item">
-                        <img src="photos/photo2.jpeg" alt="Family Photo" onclick="openModal(this.src)">
+                        <img src="photos/photo2.jpeg" alt="Family Photo" onclick="openModal(1)">
                     </div>
                     <div class="photo-item">
-                        <img src="photos/photo3.jpeg" alt="Hobby Activity" onclick="openModal(this.src)">
+                        <img src="photos/photo3.jpeg" alt="Hobby Activity" onclick="openModal(2)">
                     </div>
                     <div class="photo-item">
-                        <img src="photos/photo4.jpeg" alt="Traditional Attire" onclick="openModal(this.src)">
+                        <img src="photos/photo4.jpeg" alt="Traditional Attire" onclick="openModal(3)">
                     </div>
                 </div>
             </div>
@@ -315,44 +339,46 @@
 
     <div id="imageModal" class="modal">
         <span class="close" onclick="closeModal()">&times;</span>
+        <span class="nav-button prev" onclick="changePhoto(-1)">&#10094;</span>
+        <span class="nav-button next" onclick="changePhoto(1)">&#10095;</span>
         <img class="modal-content" id="modalImage">
     </div>
 
     <script>
-        // Disable Right Click
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
+        let currentPhotoIndex = 0;
+        const photoSources = [
+            "photos/photo1.jpeg",
+            "photos/photo2.jpeg",
+            "photos/photo3.jpeg",
+            "photos/photo4.jpeg"
+        ];
 
-        // Disable Text Selection
-        document.addEventListener('selectstart', function(e) {
-            e.preventDefault();
-        });
-
-        // Blur content when switching tabs
-        document.addEventListener('visibilitychange', function() {
-            if(document.hidden) {
-                document.body.style.filter = 'blur(5px)';
-            } else {
-                document.body.style.filter = 'none';
-            }
-        });
-
-        // Image Modal
-        function openModal(imgSrc) {
-            var modal = document.getElementById("imageModal");
-            var modalImg = document.getElementById("modalImage");
+        function openModal(index) {
+            currentPhotoIndex = index;
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("modalImage");
             modal.style.display = "flex";
-            modalImg.src = imgSrc;
+            modalImg.src = photoSources[currentPhotoIndex];
         }
 
         function closeModal() {
-            var modal = document.getElementById("imageModal");
+            const modal = document.getElementById("imageModal");
             modal.style.display = "none";
         }
 
+        function changePhoto(direction) {
+            currentPhotoIndex += direction;
+            if (currentPhotoIndex < 0) {
+                currentPhotoIndex = photoSources.length - 1; // Loop to last photo
+            } else if (currentPhotoIndex >= photoSources.length) {
+                currentPhotoIndex = 0; // Loop to first photo
+            }
+            const modalImg = document.getElementById("modalImage");
+            modalImg.src = photoSources[currentPhotoIndex];
+        }
+
         window.onclick = function (event) {
-            var modal = document.getElementById("imageModal");
+            const modal = document.getElementById("imageModal");
             if (event.target == modal) {
                 modal.style.display = "none";
             }
